@@ -1,4 +1,4 @@
-# Rasya — Ekonomi Indonesia 2026
+# Raska — Ekonomi Indonesia 2026
 
 Website statis yang menjelaskan perkembangan ekonomi Indonesia tahun 2026.
 
