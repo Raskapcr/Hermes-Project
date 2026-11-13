@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rasya — Ekonomi Indonesia 2026</title>
+<script
+src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0f1d3a;
+    --blue:#1f4ed8;
+    --teal:#0fb8a6;
+    --amber:#f5a623;
+    --red:#e0564f;
+    --ink:#1f2937;
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --line:#e5e9f2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.7;
+  }
+  a{color:inherit}
+  img{max-width:100%}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  /* ===== Nav ===== */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(15,29,58,.97);backdrop-filter:blur(10px);
+    padding:14px 0;
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between}
+  .logo{
+    font-weight:800;font-size:1.5rem;color:#fff;letter-spacing:.5px;
+  }
+  .logo span{color:var(--teal)}
+  .nav-links{display:flex;gap:22px;font-size:.92rem}
+  .nav-links a{color:#cdd9f0;text-decoration:none;padding:8px 0;border-bottom:2px solid transparent;transition:.2s}
+  .nav-links a:hover{border-color:var(--teal);color:#fff}
+
+  /* ===== Hero ===== */
+  .hero{
+    background:linear-gradient(135deg,#0f1d3a 0%,#16325c 60%,#1f4ed8 100%);
+    color:#fff;padding:70px 0 60px;
+  }
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+  h1{font-size:2.5rem;line-height:1.25;margin-bottom:18px}
+  .hero p{color:#c8d6ec;margin-bottom:26px;font-size:1.05rem}
+  .badge{
+    display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);
+    padding:6px 14px;border-radius:30px;font-size:.82rem;margin-bottom:18px;
+  }
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .kpi{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:18px}
+  .kpi .num{font-size:1.7rem;font-weight:800;color:#fff}
+  .kpi .lbl{font-size:.82rem;color:#9fb2d4;margin-top:4px}
+  .kpi.up .num{color:#4ade80}
+  .kpi.dn .num{color:#f87171}
+
+  /* ===== Section ===== */
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  .sec-head{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:30px;align-items:end}
+  .sec-head h2{font-size:1.7rem;color:var(--navy)}
+  .sec-head .sub{color:#6b7280;font-size:.95rem}
+  .tag{
+    display:inline-block;background:var(--navy);color:#fff;font-size:.76rem;
+    padding:4px 12px;border-radius:20px;margin-bottom:10px;
+  }
+
+  /* ===== Cards ===== */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .card h3{font-size:1.05rem;color:var(--navy);margin-bottom:8px}
+  .card .val{font-size:1.4rem;font-weight:800;color:var(--blue)}
+  .card .cap{font-size:.83rem;color:#6b7280}
+
+  /* ===== Two-col ===== */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:820px){.two{grid-template-columns:1fr}.sec-head{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}.hero .wrap{grid-template-columns:1fr}}
+
+  .col p{margin-bottom:14px}
+  .col .hint{font-size:.83rem;color:#6b7280;margin-top:6px}
+
+  ul.tight{margin-left:20px}
+  ul.tight li{margin-bottom:8px}
+
+  .highlight-box{
+    background:#eef6f4;border-left:4px solid var(--teal);border-radius:0 10px 10px 0;
+    padding:18px 20px;margin:22px 0;
+  }
+
+  /* ===== Chart ===== */
+  .chart{display:flex;justify-content:center;height:320px;align-items:center}
+
+  /* ===== Timeline ===== */
+  .tl{display:flex;flex-direction:column;gap:0}
+  .tl-item{
+    display:grid;grid-template-columns:110px 1fr;gap:18px;padding:22px 0;
+    border-bottom:1px solid var(--line);align-items:start;
+  }
+  .tl-item:last-child{border-bottom:none}
+  .tl-date{font-weight:800;color:var(--navy);font-size:.95rem;text-align:center}
+  .tl-date span{display:block;font-size:.78rem;color:#6b7280;font-weight:600}
+  .tl-item h3{font-size:1.08rem;margin-bottom:4px}
+  .tl-item p{font-size:.92rem;color:#4b5563}
+
+  /* ===== Footer ===== */
+  footer{
+    background:var(--navy);color:#9fb2d4;padding:44px 0;margin-top:40px;
+  }
+  .fwrap{display:grid;grid-template-columns:1.4fr 1fr;gap:24px}
+  @media(max-width:700px){.fwrap{grid-template-columns:1fr}}
+  footer h4{color:#fff;margin-bottom:10px;font-size:1rem}
+  footer p{font-size:.85rem;line-height:1.6}
+  .src{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:.8rem}
+  .src a{color:var(--teal);text-decoration:none;display:inline-block}
+  .src a:hover{text-decoration:underline}
+  .copyright{text-align:center;font-size:.8rem;color:#6b7280;margin-top:24px}
+
+  .tag-blue{background:#d9e6f5;color:var(--navy)}
+  .tag-amber{background:#fdefe3;color:#b45309}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="wrap">
+    <div class="logo">R<span>a</span>sya</div>
+    <div class="nav-links">
+      <a href="#ringkasan">Ringkasan</a>
+      <a href="#inflasi">Inflasi &amp; Rupiah</a>
+      <a href="#perdagangan">Perdagangan</a>
+      <a href="#timeline">Timeline</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <span class="badge">Laporan Ekonomi 2026</span>
+      <h1>Perekonomian Republik<br>Indonesia 2026</h1>
+      <p>Pokok-pokok capaian makroekonomi Indonesia pada tahun 2026: pertumbuhan, inflasi, nilai tukar Rupiah, serta kinerja perdagangan — ditinjau dari data resmi (BPS, BI, Kemenkeu, OECD, World Bank, ADB).</p>
+    </div>
+    <div>
+      <div class="kpi-grid">
+        <div class="card kpi up">
+          <div class="num">5,47%</div>
+          <div class="lbl">Pertumbuhan ekonomi Q3-2026 (yoy)</div>
+        </div>
+        <div class="card kpi up">
+          <div class="num">2,42%</div>
+          <div class="lbl">Inflasi April 2026 (yoy)</div>
+        </div>
+        <div class="card kpi dn">
+          <div class="num">Rp18.239</div>
+          <div class="lbl">Kurs USD/Rp 12 Nov 2026</div>
+        </div>
+        <div class="card kpi up">
+          <div class="num">US$3,36 miliar</div>
+          <div class="lbl">Surplus perdagangan Sep 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== RINGKASAN ===== -->
+<section id="ringkasan">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="tag tag-blue">Ringkasan Makro</span>
+        <h2 style="margin-top:6px">Pertumbuhan Ekonomi: Resilien, Namun Terdampak Luar Negeri</h2>
+        <p class="sub">Ekonomi Indonesia tumbuh lebih cepat di kuartal III daripada awal tahun, khusunya karena permintaan domestik yang kuat.</p>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="col">
+        <p>Perekonomian Indonesia memasuki 2026 dengan momentum kuat. BQ-2026 (World Bank) mencatat PDB naik <strong>5,6%</strong> secara tahunan — tingkat tertinggi sejak pertengahan 2021 — didorong konsumsi rumah tangga, bonus perangkat daerah, serta perluasan program makanan gratis sekolah.</p>
+        <p>Namun, tumbuhnya ini dinanti oleh ketidakpastian eksternal. Konflik di Timur Tengah menekan harga minyak mentah ke atas <strong>US$100/bbl</strong>, yang menggtigkan inflasi, beban subsidi energi, dan rantai pasok. Di sisi keuangan, keprihatinan MSCI atas sekuritas Indonesia mendorong jual ekuitas dan ketiga aliran modal keluar.</p>
+        <div class="highlight-box">
+          <p style="margin:0"><strong>Inti:</strong> Pertumbuhan masih di atas 5%, tetapi yang diminta adalah kualitas lapangan kerja dan daya beli yang stabil. Pemerintah serta BI bergeming di atas kebijakan fiskal dan moneter.</p>
+        </div>
+      </div>
+      <div class="col">
+        <h3 style="color:var(--navy)">Lewat dari angka</h3>
+        <ul class="tight">
+          <li><strong>Q1-2026:</strong> PDB +5,6% yoy &mdash; momentum awal terjaga.</li>
+          <li><strong>Q2-2026:</strong> pertumbuhan melambat ke sekitar 5,2&ndash;5,3%.</li>
+          <li><strong>Q3-2026:</strong> memuncak lagi pada <strong>5,47%</strong> yoy.</li>
+          <li>Target akhir tahun: <strong>5,45%</strong> (Menteri Koordinator Perekonomian).</li>
+          <li>Proyeksi OECD: <strong>4,7%</strong> pada 2026, naik ke 5,0% pada 2027.</li>
+        </ul>
+        <p class="hint">Sumber: BPS, World Bank, OECD, Kemenkeu, Bi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INFLASI & RUPIAH ===== -->
+<section id="inflasi">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="tag">Inflasi &amp; Mata Uang</span>
+        <h2 style="margin-top:6px">Inflasi Terkendali, Rupiah di bawah Tekanan</h2>
+        <p class="sub">Headline tetap berada dalam target BI, tetapi nilai tukar menunjukkan volatilitas akibat guncangan global.</p>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Target Inflasi BI</h3>
+        <div class="val">2,5% ± 1 ppo</div>
+        <div class="cap">Ruang target 2026&ndash;2027 (termasuk 2027)</div>
+      </div>
+      <div class="card">
+        <h3>Inflasi April 2026</h3>
+        <div class="val">2,42%</div>
+        <div class="cap">yoy; masih di bawah target</div>
+      </div>
+      <div class="card">
+        <h3>Inflasi Juni 2026</h3>
+        <div class="val">3,3%</div>
+        <div class="cap">yoy; naik akibat transportasi</div>
+      </div>
+      <div class="card">
+        <h3>Suku Bunga Kebijakan BI</h3>
+        <div class="val">5,75%</div>
+        <div class="cap">Naik 75 bps dua kali sejak konflik Timur Tengah</div>
+      </div>
+      <div class="card">
+        <h3>Rp/US$ (12 Nov 2026)</h3>
+        <div class="val">Rp18.239</div>
+        <div class="cap">Depresiasi ±7&ndash;7,6% sepanjang 2026</div>
+      </div>
+      <div class="card">
+        <h3>VPB Minyak</h3>
+        <div class="val">&gt; US$100</div>
+        <div class="cap">Dorong konflik Timur Tengah</div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p style="margin:0"><strong>Mengapa kena inflasi?</strong> Kenaikan harga energi global (minyak &amp; gas) mengalir ke harga komoditas dan transportasi. BI menerapkan <em>fuel price freeze</em> sehingga dampak langsung ke rumah tangga tergahar, namun dampak tidak langsung ke sektor energi-intensif tetap terasa.</p>
+    </div>
+
+    <p>Rupiah memang mengalami desakan cukup kuat: sejak pertengahan 2025 hingga pertengahan 2026 nilai tukarnya melemah antara <strong>7% dan 7,6%</strong> terhadap dolar, menyentuh garis 18.000 dalam waktu singkat di Juni 2026. Perlindungan utama adalah suku bunga BI yang dinaikkan, yield investasi yang menarik, serta dopt-in program suku bunga lazim (DNDF). Pada <strong>20 Oktober 2026</strong>, rupiah membaik ke <strong>Rp17.985/USD</strong> sebelum sedikit terdepresiasi kembali.</p>
+    <p>Menurut BI, inflasi 2026 dan 2027 diharapkan tetap berada di dalam <strong>2,5% ± 1%</strong>, didukung sinergi kebijakan moneter dengan pemerintah pusat dan daerah.</p>
+  </div>
+</section>
+
+<!-- ===== PERDAGANGAN ===== -->
+<section id="perdagangan">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="tag tag-amber">Neraca Perdagangan</span>
+        <h2 style="margin-top:6px">Surplus Perdagangan Tak Mampat: Ekspor Bertambah, Impor Lebih Cepat</h2>
+        <p class="sub">Ekspor non-migas tumbuh kuat, tetapi tekanan dari impor barang modal mulai menekan surplus eksternal.</p>
+      </div>
+    </div>
+
+    <div class="two">
+      <div class="col">
+        <div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+          <div class="card"><div class="val">+5,58%</div><div class="cap">Ekspor Jan&ndash;Sep 2026 (yoy)</div></div>
+          <div class="card"><div class="val">+19,67%</div><div class="cap">Impor Jan&ndash;Sep 2026 (yoy)</div></div>
+          <div class="card"><div class="val">US$10,61 miliar</div><div class="cap">Surplus Jan&ndash;Sep 2026</div></div>
+          <div class="card"><div class="val">US$3,36 miliar</div><div class="cap">Surplus September 2026</div></div>
+          <div class="card"><div class="val">US$27,59 miliar</div><div class="cap">Ekspor September 2026</div></div>
+        </div>
+      </div>
+      <div class="col">
+        <h3 style="color:var(--navy)">Turunnya surplus: perangkat atau bahaya?</h3>
+        <p>Pertumbuhan impor yang jauh lebih cepat dari ekspor menandakan kebutuhan input dan barang modal masih tinggi &mdash; suatu tanda aktivitas produksi. Namun, jika dibiaskan terus, dapat menyempitkan "bantalan eksternal" (current account buffer).</p>
+        <p class="hint">Pada Januari&ndash;September 2026, impor musuh naik 19,67%, sedangkan ekspor hanya naik 5,58% &mdash; perbedaan arah yang perlu dipantau. Surplus merupakan persentase dari PDB lebih rendah dibanding periode tahun lalu.</p>
+        <p>Sebaliknya, ekspor komoditas bukan migas masih kokoh: besi &amp; baja +4,88%, CPO &amp; turunannya +6,57%, batu bara +4,31% (Januari&ndash;Agustus). Hilinisasi memungkinkan ekspor industri pengolahan tumbuh 6,62%.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIMELINE ===== -->
+<section id="timeline">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="tag">Peta Karen</span>
+        <h2 style="margin-top:6px">Perjalanan Ekonomi 2026</h2>
+        <p class="sub">Titik penting yang membentuk gambaran makro Indonesia di tahun ini.</p>
+      </div>
+    </div>
+
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-date">Q1 2026<span class="sub">Jan&ndash;Mar</span></div>
+        <div>
+          <h3>Momentum muncul dari dalam negeri</h3>
+          <p>PDB +5,6% yoy &mdash; tertinggi sejak 2021. Grounded on konsumsi rumah tangga, bonus perangkat daerah, dan perluasan program makan gratis.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Q2 2026<span class="sub">Apr&ndash;Jun</span></div>
+        <h3>Guncangan eksternal</h3>
+        <p>Konflik Timur Tengah menekan minyak &gt;US$100. Inflasi naik ke 3,3% (Juni). Rupiah melemah, surplus perdagangan menyempit. BI naik suku bunga 75 bps ke 5,75%.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Q3 2026<span class="sub">Jul&ndash;Sep</span></div>
+        <h3>Puncak pertumbuhan</h3>
+        <p>PDB +5,47% yoy. Neraca perdagangan kembali surplus (US$3,36 miliar). PMI Manufaktur keluar zona kontraksi ke ekspansi (52,4).</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Q4 / akhir 2026<span class="sub">Okt&ndash;Des</span></div>
+        <h3>Mikro mengeruk keluasan</h3>
+        <p>Rupiah ke 18.239/USD (12 Nov). Ekspor menembus US$27,59 miliar (Sep) &mdash; dipicu kenaikan 11,87% yoy. BI tetap stabilisasi nilai tukar.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:26px">
+      <p style="margin:0"><strong>Kesimpulan singkat:</strong> 2026 dimulai kuat dari dalam negeri, diuji guncangan luar negeri (minyak &amp; kapital), tetapi tumbuhannya masih di atas 5% dan inflasinya terkendali. Tantangan utamanya: daya beli, kualitas lapangan kerja, dan surplus eksternal yang semakin sempit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GRAFIK ===== -->
+<section id="grafik">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="tag">Visualisasi</span>
+        <h2 style="margin-top:6px">Pertumbuhan Ekonomi vs Inflasi</h2>
+        <p class="sub">Perbandingan tren utama dari berbagai sumber proyeksi.</p>
+      </div>
+    </div>
+    <div class="chart"><canvas id="comboChart"></canvas></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="fwrap">
+    <div>
+      <h4>Rasya &mdash; Ekonomi Indonesia 2026</h4>
+      <p>Website ini disusun sebagai laporan umum dan pendidikan, bukan rekomendasi investasi. Angka-angka bersifat kumpulan dari sumber terbuka kegiatan publik; data dapat berbeda antarlembaga.</p>
+    </div>
+    <div>
+      <h4>Sumber Data</h4>
+      <div class="src">
+        <a href="https://www.bi.go.id" target="_blank">Bank Indonesia (BI)</a>
+        <a href="https://www.bps.go.id" target="_blank">Statistik Indonesia (BPS)</a>
+        <a href="https://www.oecd.org" target="_blank">OECD Economic Outlook Vol.2026/1</a>
+        <a href="https://openknowledge.worldbank.org" target="_blank">World Bank Indonesia Economic Prospects Jun 2026</a>
+        <a href="https://www.adb.org" target="_blank">Asian Development Bank</a>
+        <a href="https://www.kemenkeu.go.id" target="_blank">Kementerian Keuangan</a>
+        <a href="https://www.cnbcindonesia.com" target="_blank">CNBC Indonesia</a>
+        <a href="https://www.kemenkeu.go.id" target="_blank">Kementerian Perdagangan ( BKC )</a>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">&copy; 2026 &mdash; Rasy. Dibuat untuk tujuan edukasi umum.</div>
+</footer>
+
+<script>
+  (() => {
+    const ctx = document.getElementById('comboChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Q1 2026','Q2 2026','Q3 2026'],
+        datasets: [
+          {
+            label: 'PDB (BPS, % yoy)',
+            data: [5.61, 5.2, 5.47],
+            backgroundColor: '#1f4ed8',
+            yAxisID: 'y',
+          },
+          {
+            label: 'Inflasi (BI, % yoy)',
+            data: [3.1, 2.42, 3.3],
+            type: 'line',
+            borderColor: '#e0564f',
+            borderWidth: 2,
+            pointBackgroundColor: '#e0564f',
+            fill: false,
+            yAxisID: 'y2',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {title: {display:true,text:'Pertumbuhan Ekonomi vs Inflasi RI (2026)',color:'#4b5563',font:{size:14}}},
+        scales: {
+          y: {position:'left',grid:{color:'#e5e9f2'},title:{display:true,text:'Pertumbuhan PDB (%)',color:'#6b7280',font:{size:11}}},
+          y2: {position:'right',grid:{display:false},title:{display:true,text:'Inflasi (%)',color:'#6b7280',font:{size:11}}},
+          x: {grid:{display:false}}
+        },
+        interaction: {mode:'index',intersect:false}
+      }
+    });
+  })();
+</script>
+</body>
+</html>
